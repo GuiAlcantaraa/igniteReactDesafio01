@@ -1,4 +1,6 @@
 import styles from './TaskList.module.css';
+import { v4 as uuid } from 'uuid';
+
 import { AiOutlinePlusCircle } from "react-icons/ai";
 
 import clip from '../../assets/Clipboard.png'
@@ -6,7 +8,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { Task } from '../Task';
 
 interface Task {
-    id: number;
+    id: string;
     title: string;
     isComplete: boolean;
 }
@@ -20,7 +22,7 @@ export function TaskList() {
         event.preventDefault()
 
         const newTask = {
-            id: Math.random(),
+            id: uuid(),
             title: description,
             isComplete: false
         }
@@ -31,12 +33,27 @@ export function TaskList() {
     function handleNewDescriptionChange(event: ChangeEvent<HTMLInputElement>) {
         setDescription(event.target.value)
     }
+    function handleToggleTaskCompletion(id: string) {
 
-    function handleDeleteTask(id: number) {
-        console.log(id)
+        const newTasks = tasks.map(tasks => tasks.id === id ? {
+            ...tasks,
+            isComplete: !tasks.isComplete
+        } : tasks);
+
+        setTasks(newTasks)
+
+    }
+
+    function handleRemoveTask(id: string) {
+
+        const filteredTasks = tasks.filter(tasks => tasks.id !== id);
+        setTasks(filteredTasks);
+
     }
 
     const isTaskEmpty = tasks.length === 0
+    const completedTasks = tasks.filter((task) => task.isComplete).length;
+    const amountOfTasksCreated = tasks.length
 
     return (
         <div className={styles.tasks}>
@@ -46,6 +63,7 @@ export function TaskList() {
                     placeholder='Adicione uma nova tarefa'
                     value={description}
                     onChange={handleNewDescriptionChange}
+                    required
                 />
 
                 <button type='submit'>
@@ -58,13 +76,13 @@ export function TaskList() {
                 <div className={styles.amountOfTasks}>
                     <div>
                         <p>Tarefas criadas</p>
-                        <span>70</span>
+                        <span>{amountOfTasksCreated}</span>
                     </div>
 
                     <div>
                         <p>Concluídas</p>
                         <span>
-                            20 de 50
+                            {completedTasks} de {amountOfTasksCreated}
                         </span>
                     </div>
                 </div>
@@ -87,7 +105,8 @@ export function TaskList() {
                             title={task.title}
                             id={task.id}
                             isComplete={task.isComplete}
-                            onComplete={handleDeleteTask}
+                            onComplete={handleToggleTaskCompletion}
+                            onDelete={handleRemoveTask}
                         />
                     ))
 

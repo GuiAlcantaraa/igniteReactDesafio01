@@ -4,22 +4,22 @@ import { TbTrash } from "react-icons/tb";
 
 
 interface Task {
-    id: number;
+    id: string;
     title: string;
     isComplete: boolean;
-    onComplete: (id: number) => void;
+    onComplete: (id: string) => void;
+    onDelete: (id: string) => void;
 
 }
 
+export function Task({ id, title, isComplete, onComplete, onDelete }: Task) {
 
-
-export function Task({ id, title, isComplete }: Task) {
-
-
-    console.log(isComplete)
     return (
         <div className={styles.task}>
-            <button className={styles.checkContainer}>
+            <button
+                className={styles.checkContainer}
+                onClick={() => onComplete(id)}
+            >
                 {isComplete ? <BsFillCheckCircleFill /> : <div />}
             </button>
 
@@ -28,7 +28,10 @@ export function Task({ id, title, isComplete }: Task) {
             </p>
 
 
-            <button className={styles.deleteButton}>
+            <button
+                className={styles.deleteButton}
+                onClick={() => onDelete(id)}
+            >
                 <TbTrash size={20} />
             </button>
         </div>
